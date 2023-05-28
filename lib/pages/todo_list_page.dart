@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:app_tarefas/custom_widgets/todo_list_item.dart';
 import 'package:app_tarefas/models/tarefas.dart';
+import 'package:app_tarefas/repository/tarefa_repository.dart';
 import 'package:flutter/material.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -13,8 +14,18 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   final TextEditingController tarefaController = TextEditingController();
-
+  final TarefaRepository tarefaRepository = TarefaRepository();
   List<Tarefas> tarefas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    tarefaRepository.getListaTarefas().then((value) {
+      setState(() {
+        tarefas = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +60,7 @@ class _TodoListPageState extends State<TodoListPage> {
                         ElevatedButton(
                           onPressed: () {
                             addTask(tarefaController.text);
+                            tarefaRepository.saveListaTarefas(tarefas);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
